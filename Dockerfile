@@ -18,5 +18,5 @@ RUN mkdir -p /etc/nginx/conf.d /etc/nginx/http.d && \
 
 EXPOSE 8080
 
-# Mantém nginx em foreground e n8n em background
-CMD ["/bin/sh", "-lc", "n8n & exec nginx -g 'daemon off;' "]
+# Mantém nginx em foreground e n8n em background, usando env para localizar o shell
+CMD ["/usr/bin/env", "sh", "-lc", "n8n & exec nginx -g 'daemon off;' "]
