@@ -2,24 +2,21 @@ FROM n8nio/n8n:latest
 
 USER root
 
-# Instala nginx usando o gerenciador disponível (apk ou apt)
+# Instala nginx (compatível com Debian ou Alpine)
 RUN if command -v apk >/dev/null 2>&1; then \
       apk add --no-cache nginx; \
     else \
       apt-get update && apt-get install -y nginx && rm -rf /var/lib/apt/lists/*; \
     fi
 
-# Copia a config e coloca no local certo, cobrindo variantes (conf.d e http.d)
+# Copia a config e instala em caminhos compatíveis
 COPY nginx.conf /tmp/nginx.conf
 RUN mkdir -p /etc/nginx/conf.d /etc/nginx/http.d && \
-    cp /tmp/nginx.conf /etc/nginx/conf.d/default.conf && \
-    cp /tmp/nginx.conf /etc/nginx/http.d/default.conf && \
+    cp /tmp/nginx.conf /etc/nginx/conf.d/default.conf || true && \
+    cp /tmp/nginx.conf /etc/nginx/http.d/default.conf || true && \
     rm -f /tmp/nginx.conf
-
-# Script de inicialização
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
 
 EXPOSE 8080
 
-CMD ["/start.sh"]
+# Sobe nginx (daemon) e mantém n8n em primeiro plano
+CMD ["/bin/sh", "-lc", "nginx && exec n8n"]
