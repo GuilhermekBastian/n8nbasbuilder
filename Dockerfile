@@ -8,7 +8,7 @@ RUN apk add --no-cache nginx supervisor
 # Configuração do nginx para remover headers de segurança
 RUN mkdir -p /etc/nginx/sites-enabled && \
     echo 'server { \
-    listen 8080;
+    listen 8080; \
     server_name _; \
     \
     location / { \
